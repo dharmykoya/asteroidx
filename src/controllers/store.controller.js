@@ -1,15 +1,21 @@
-import { createStoreService, getStoreService, getAllStoreService } from "../services/store.service";
+import {
+  createStoreService,
+  getStoreService,
+  getAllStoreService,
+  deleteStoreService
+} from "../services/store.service";
 
 export default {
   async createStore(request, response) {
     try {
-      if (!request.name || !request.url) {
+      const {name, url} = request.body
+      if (!name || !url) {
         return response.status(422).json({
           status: "fail",
           message: "name or url is required"
         });
       }
-      const data = await createStoreService(request);
+      const data = await createStoreService(request.body);
 
       return response.status(201).json({
         status: "success",
@@ -24,7 +30,7 @@ export default {
   },
   async getStore(request, response) {
     try {
-      const { storeId } = request.params
+      const { storeId } = request.params;
       if (!storeId) {
         return response.status(422).json({
           status: "fail",
@@ -47,7 +53,7 @@ export default {
     } catch (error) {
       return response.status(500).json({
         status: "fail",
-        message: error.message,
+        message: error.message
       });
     }
   },
@@ -69,7 +75,36 @@ export default {
     } catch (error) {
       return response.status(500).json({
         status: "fail",
-        message: error.message,
+        message: error.message
+      });
+    }
+  },
+  async deleteStore(request, response) {
+    try {
+      const { storeId } = request.params;
+      if (!storeId) {
+        return response.status(422).json({
+          status: "fail",
+          message: "storeId is required"
+        });
+      }
+      const data = await deleteStoreService(storeId);
+
+      if (!data) {
+        return response.status(400).json({
+          status: "failed",
+          message: "no store found"
+        });
+      }
+
+      return response.status(200).json({
+        status: "success",
+        message: 'store deleted successfully'
+      });
+    } catch (error) {
+      return response.status(500).json({
+        status: "fail",
+        message: error.message
       });
     }
   }
