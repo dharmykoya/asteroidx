@@ -1,31 +1,30 @@
-export default (sequelize, DataTypes) => {
-  const User = sequelize.define('Store', {
-    url: {
-      type: DataTypes.STRING,
-      allowNull: {
-        args: false,
-        msg: 'Url is required'
-      },
-      validate: {
-        url: {
-          args: true,
-          msg: 'Please enter a valid character'
-        }
-      }
-    },
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Store extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+    }
+  };
+  Store.init({
     name: {
       type: DataTypes.STRING,
-      allowNull: {
-        args: false,
-        msg: 'Name is required'
-      },
-      validate: {
-        isAlpha: {
-          args: true,
-          msg: 'Please enter a valid character'
-        }
-      }
+      allowNull: false
     },
+    url: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+  }, {
+    sequelize,
+    modelName: 'Store',
   });
   return Store;
 };
