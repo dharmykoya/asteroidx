@@ -15,6 +15,22 @@ app.get('/', (req, res) => {
 
 app.use('/stores', store)
 
+app.use((request, response, next) => {
+  const error = new Error('You are trying to access a wrong Route');
+  error.status = 404;
+  next(error);
+});
+
+// eslint-disable-next-line no-unused-vars
+app.use((error, request, response, next) => {
+  response.status(error.status || 500);
+  response.json({
+    status: error.status || 500,
+    error: error.name,
+    message: error.message
+  });
+});
+
  
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
