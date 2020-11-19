@@ -9,12 +9,30 @@ const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
 let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+// if (config.use_env_variable) {
+//   sequelize = new Sequelize(process.env[config.use_env_variable], config);
+// } else {
+//   sequelize = new Sequelize(config.database, config.username, config.password, config);
+// }
+if (config.use_env_variable === 'production') {
+  /* istanbul ignore next */
+  sequelize = new Sequelize(process.env.DATABASE_URL, config);
+} else if (process.env.NODE_ENV === 'test') {
+  sequelize = new Sequelize(
+    process.env.TEST_DATABASE_NAME,
+    process.env.TEST_DATABASE_USERNAME,
+    process.env.TEST_DATABASE_PASSWORD,
+    config
+  );
+  /* istanbul ignore next */
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(
+    process.env.DATABASE_NAME,
+    process.env.DATABASE_USERNAME,
+    process.env.DATABASE_PASSWORD,
+    config
+  );
 }
-
 fs
   .readdirSync(__dirname)
   .filter(file => {
